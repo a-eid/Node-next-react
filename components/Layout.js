@@ -25,6 +25,7 @@ const Layout = ({ title = "", url = "", description = "", ogImage = "" , childre
       <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <link rel="stylesheet" href="/static/styles/main.css"/>
     </Head>
     <Nav />
     <div className="wrapper">
