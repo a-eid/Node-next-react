@@ -12,34 +12,26 @@ import { GoogleLogin } from "react-google-login"
 class Home extends Component {
   static getInitialProps({ reduxStore, req }) {
     const isServer = !!req
-    // reduxStore.dispatch(serverRenderClock(isServer))
     return {}
   }
 
   componentDidMount() {
-    // const { startClock } = this.props
-    // this.timer = startClock()
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timer)
-  }
 
   facebookResponse = (e) => {
     console.log("fb, here")
     const { dispatch } = this.props
     dispatch(authSuccess(e))
-    // ...
   }
   googleResponse = (e) => {
     console.log("google, here")
     const { dispatch } = this.props
     dispatch(authSuccess(e))
-    // ...
   }
 
   onFailure = (error) => {
-    alert(error)
+    alert("something went wrong", error)
   }
 
   render() {
@@ -79,7 +71,7 @@ class Home extends Component {
 
 const mapStateToProps = (state) => {
   console.log(state)
-  return {}
+  return state
 }
 
 export default connect(mapStateToProps)(Home)

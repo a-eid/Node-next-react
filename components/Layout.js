@@ -9,7 +9,7 @@ const Layout = ({ title = "", url = "", description = "", ogImage = "" , childre
   <Fragment>
     <Head>
       <meta charSet="UTF-8" />
-      <title>{title}</title>
+      <title>{title} | Linnks</title>
       <meta name="description" content={description} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" sizes="192x192" href="/static/touch-icon.png" />

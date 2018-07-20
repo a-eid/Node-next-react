@@ -24,17 +24,14 @@ var corsOption = {
 app.prepare().then(() => {
   const server = express();
   server.use(cors(corsOption));
-  // server.set('views', path.join(__dirname, 'views'));
-  // server.set('view engine', 'jade');
 
 
   server.use(logger('dev'));
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: true }));
   server.use(cookieParser());
-  // server.use(express.static(path.join(__dirname, 'public')));
 
-  server.use('/api/', routes);
+  server.use('/api', routes);
 
 
   server.get("/", (req, res) => {
