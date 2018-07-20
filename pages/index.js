@@ -1,20 +1,40 @@
-import React, { Component, Fragment } from "react";
-import Layout from "../components/Layout";
+import React, { Component, Fragment } from "react"
+import { connect } from "react-redux"
+import Layout from "../components/Layout"
 import config from "../config.json"
+
+import {startClock, serverRenderClock} from "../redux/actions/actions"
 
 // social auth
 // import TwitterLogin from "react-twitter-auth";
-import FacebookLogin from "react-facebook-login";
-import { GoogleLogin } from "react-google-login";
+import FacebookLogin from "react-facebook-login"
+import { GoogleLogin } from "react-google-login"
 
 class Home extends Component {
-  state = {};
-  twitterResponse = e => {};
-  facebookResponse = e => {};
-  googleResponse = e => {};
-  onFailure = error => {
-    alert(error);
-  };
+  static getInitialProps({ reduxStore, req }) {
+    const isServer = !!req
+    reduxStore.dispatch(serverRenderClock(isServer))
+
+    return {}
+  }
+
+  // state = {}
+
+  componentDidMount() {
+    const { dispatch } = this.props
+    this.timer = startClock(dispatch)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
+  }
+
+  twitterResponse = (e) => {}
+  facebookResponse = (e) => {}
+  googleResponse = (e) => {}
+  onFailure = (error) => {
+    alert(error)
+  }
 
   render() {
     return (
@@ -23,7 +43,6 @@ class Home extends Component {
           <div>home page</div>
 
           <div className="social-login">
-
             <FacebookLogin
               appId={config.FACEBOOK_APP_ID}
               autoLoad={false}
@@ -45,12 +64,11 @@ class Home extends Component {
               <span>google login</span>
             </GoogleLogin>
           </div>
-
         </Layout>
         <style jsx>{``}</style>
       </Fragment>
-    );
+    )
   }
 }
 
-export default Home;
+export default connect()(Home)

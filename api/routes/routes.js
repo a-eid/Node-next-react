@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const { generateToken, sendToken } = require("../../utils/token.utils");
-const passport = require("passport");
-const config = require("../../config");
-const request = require("request");
-require("../../passport")();
+const express = require("express")
+const router = express.Router()
+const { generateToken, sendToken } = require("../../utils/token.utils")
+const passport = require("passport")
+const config = require("../../config")
+const request = require("request")
+require("../../passport")()
 
 router.route("/auth/twitter/reverse").post(function(req, res) {
   request.post(
@@ -13,19 +13,19 @@ router.route("/auth/twitter/reverse").post(function(req, res) {
       oauth: {
         oauth_callback: "http%3A%2F%2Flocalhost%3A3000%2Ftwitter-callback",
         consumer_key: config.twitterAuth.consumerKey,
-        consumer_secret: config.twitterAuth.consumerSecret
-      }
+        consumer_secret: config.twitterAuth.consumerSecret,
+      },
     },
     function(err, r, body) {
       if (err) {
-        return res.send(500, { message: e.message });
+        return res.send(500, { message: e.message })
       }
       const jsonStr =
-        '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}';
-      res.send(JSON.parse(jsonStr));
-    }
-  );
-});
+        '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}'
+      res.send(JSON.parse(jsonStr))
+    },
+  )
+})
 
 router.route("/auth/twitter").post(
   (req, res, next) => {
@@ -35,72 +35,72 @@ router.route("/auth/twitter").post(
         oauth: {
           consumer_key: config.twitterAuth.consumerKey,
           consumer_secret: config.twitterAuth.consumerSecret,
-          token: req.query.oauth_token
+          token: req.query.oauth_token,
         },
-        form: { oauth_verifier: req.query.oauth_verifier }
+        form: { oauth_verifier: req.query.oauth_verifier },
       },
       function(err, r, body) {
         if (err) {
-          return res.send(500, { message: err.message });
+          return res.send(500, { message: err.message })
         }
 
         const bodyString =
-          '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}';
-        const parsedBody = JSON.parse(bodyString);
+          '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}'
+        const parsedBody = JSON.parse(bodyString)
 
-        req.body["oauth_token"] = parsedBody.oauth_token;
-        req.body["oauth_token_secret"] = parsedBody.oauth_token_secret;
-        req.body["user_id"] = parsedBody.user_id;
+        req.body["oauth_token"] = parsedBody.oauth_token
+        req.body["oauth_token_secret"] = parsedBody.oauth_token_secret
+        req.body["user_id"] = parsedBody.user_id
 
-        next();
-      }
-    );
+        next()
+      },
+    )
   },
   passport.authenticate("twitter-token", { session: false }),
   function(req, res, next) {
     if (!req.user) {
-      return res.send(401, "User Not Authenticated");
+      return res.send(401, "User Not Authenticated")
     }
     req.auth = {
-      id: req.user.id
-    };
+      id: req.user.id,
+    }
 
-    return next();
+    return next()
   },
   generateToken,
-  sendToken
-);
+  sendToken,
+)
 
 router.route("/auth/facebook").post(
   passport.authenticate("facebook-token", { session: false }),
   function(req, res, next) {
     if (!req.user) {
-      return res.send(401, "User Not Authenticated");
+      return res.send(401, "User Not Authenticated")
     }
     req.auth = {
-      id: req.user.id
-    };
+      id: req.user.id,
+    }
 
-    next();
+    next()
   },
   generateToken,
-  sendToken
-);
+  sendToken,
+)
 
 router.route("/auth/google").post(
   passport.authenticate("google-token", { session: false }),
   function(req, res, next) {
     if (!req.user) {
-      return res.send(401, "User Not Authenticated");
+      return res.send(401, "User Not Authenticated")
     }
     req.auth = {
-      id: req.user.id
-    };
+      id: req.user.id,
+    }
 
-    next();
+    next()
   },
   generateToken,
-  sendToken
-);
+  sendToken,
+)
 
-module.exports = router;
+module.exports = router
