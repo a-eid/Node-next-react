@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose")
+const Schema = mongoose.Schema
 
 module.exports = function() {
-  const db = mongoose.connect("mongodb://localhost:27017/linnks");
+  const db = mongoose.connect("mongodb://localhost:27017/linnks")
 
   const UserSchema = new Schema({
     email: {
@@ -10,79 +10,35 @@ module.exports = function() {
       required: true,
       trim: true,
       unique: true,
-      match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
     },
     facebookProvider: {
       type: {
         id: String,
-        token: String
+        token: String,
       },
-      select: false
+      select: false,
     },
-    // twitterProvider: {
-    //   type: {
-    //     id: String,
-    //     token: String
-    //   },
-    //   select: false
-    // },
     googleProvider: {
       type: {
         id: String,
-        token: String
+        token: String,
       },
-      select: false
-    }
-  });
+      select: false,
+    },
+  })
 
-  UserSchema.set("toJSON", { getters: true, virtuals: true });
-
-  UserSchema.statics.upsertTwitterUser = function(
-    token,
-    tokenSecret,
-    profile,
-    cb
-  ) {
-    const that = this;
-    return this.findOne(
-      {
-        "twitterProvider.id": profile.id
-      },
-      function(err, user) {
-        // no user was found, lets create a new one
-        if (!user) {
-          const newUser = new that({
-            email: profile.emails[0].value,
-            twitterProvider: {
-              id: profile.id,
-              token: token,
-              tokenSecret: tokenSecret
-            }
-          });
-
-          newUser.save(function(error, savedUser) {
-            if (error) {
-              console.log(error);
-            }
-            return cb(error, savedUser);
-          });
-        } else {
-          return cb(err, user);
-        }
-      }
-    );
-  };
-
+  UserSchema.set("toJSON", { getters: true, virtuals: true })
   UserSchema.statics.upsertFbUser = function(
     accessToken,
     refreshToken,
     profile,
-    cb
+    cb,
   ) {
-    var that = this;
+    var that = this
     return this.findOne(
       {
-        "facebookProvider.id": profile.id
+        "facebookProvider.id": profile.id,
       },
       function(err, user) {
         // no user was found, lets create a new one
@@ -92,33 +48,33 @@ module.exports = function() {
             email: profile.emails[0].value,
             facebookProvider: {
               id: profile.id,
-              token: accessToken
-            }
-          });
+              token: accessToken,
+            },
+          })
 
           newUser.save(function(error, savedUser) {
             if (error) {
-              console.log(error);
+              console.log(error)
             }
-            return cb(error, savedUser);
-          });
+            return cb(error, savedUser)
+          })
         } else {
-          return cb(err, user);
+          return cb(err, user)
         }
-      }
-    );
-  };
+      },
+    )
+  }
 
   UserSchema.statics.upsertGoogleUser = function(
     accessToken,
     refreshToken,
     profile,
-    cb
+    cb,
   ) {
-    var that = this;
+    var that = this
     return this.findOne(
       {
-        "googleProvider.id": profile.id
+        "googleProvider.id": profile.id,
       },
       function(err, user) {
         // no user was found, lets create a new one
@@ -128,24 +84,24 @@ module.exports = function() {
             email: profile.emails[0].value,
             googleProvider: {
               id: profile.id,
-              token: accessToken
-            }
-          });
+              token: accessToken,
+            },
+          })
 
           newUser.save(function(error, savedUser) {
             if (error) {
-              console.log(error);
+              console.log(error)
             }
-            return cb(error, savedUser);
-          });
+            return cb(error, savedUser)
+          })
         } else {
-          return cb(err, user);
+          return cb(err, user)
         }
-      }
-    );
-  };
+      },
+    )
+  }
 
-  mongoose.model("User", UserSchema);
+  mongoose.model("User", UserSchema)
 
-  return db;
-};
+  return db
+}

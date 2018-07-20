@@ -3,35 +3,41 @@ import { connect } from "react-redux"
 import Layout from "../components/Layout"
 import config from "../config.json"
 
-import {startClock, serverRenderClock} from "../redux/actions/actions"
+import { authFailure, authRequest, authSuccess } from "../redux/actions/actions"
 
 // social auth
-// import TwitterLogin from "react-twitter-auth";
 import FacebookLogin from "react-facebook-login"
 import { GoogleLogin } from "react-google-login"
 
 class Home extends Component {
   static getInitialProps({ reduxStore, req }) {
     const isServer = !!req
-    reduxStore.dispatch(serverRenderClock(isServer))
-
+    // reduxStore.dispatch(serverRenderClock(isServer))
     return {}
   }
 
-  // state = {}
-
   componentDidMount() {
-    const { dispatch } = this.props
-    this.timer = startClock(dispatch)
+    // const { startClock } = this.props
+    // this.timer = startClock()
   }
 
   componentWillUnmount() {
     clearInterval(this.timer)
   }
 
-  twitterResponse = (e) => {}
-  facebookResponse = (e) => {}
-  googleResponse = (e) => {}
+  facebookResponse = (e) => {
+    console.log("fb, here")
+    const { dispatch } = this.props
+    dispatch(authSuccess(e))
+    // ...
+  }
+  googleResponse = (e) => {
+    console.log("google, here")
+    const { dispatch } = this.props
+    dispatch(authSuccess(e))
+    // ...
+  }
+
   onFailure = (error) => {
     alert(error)
   }
@@ -71,4 +77,9 @@ class Home extends Component {
   }
 }
 
-export default connect()(Home)
+const mapStateToProps = (state) => {
+  console.log(state)
+  return {}
+}
+
+export default connect(mapStateToProps)(Home)
