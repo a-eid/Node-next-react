@@ -1,13 +1,11 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-const links = [
-  { href: '/about', label: 'About' }
-].map(link => {
+const links = [{ href: "/about", label: "About" }].map((link) => {
   link.key = `nav-link-${link.href}-${link.label}`
   return link
 })
 
-const Nav = () => (
+const Nav = ({ isAuthenticated }) => (
   <nav>
     <ul>
       <li>
@@ -15,23 +13,27 @@ const Nav = () => (
           <a>Home</a>
         </Link>
       </li>
-      <ul>
-        {links.map(
-          ({ key, href, label }) => (
-            <li key={key}>
-              <Link href={href}>
-                <a>{label}</a>
-              </Link>
-            </li>
-          )
-        )}
-      </ul>
+      {links.map(({ key, href, label }) => (
+        <li key={key}>
+          <Link href={href}>
+            <a>{label}</a>
+          </Link>
+        </li>
+      ))}
+      {isAuthenticated ? (
+        <li key="dashboard">
+          <Link prefetch href="/dashboard">
+            <a>Dashboard</a>
+          </Link>
+        </li>
+      ) : null}
     </ul>
 
     <style jsx>{`
       :global(body) {
         margin: 0;
-        font-family: -apple-system,BlinkMacSystemFont,Avenir Next,Avenir,Helvetica,sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
+          Helvetica, sans-serif;
       }
       nav {
         text-align: center;
