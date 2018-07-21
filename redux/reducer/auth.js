@@ -1,27 +1,21 @@
 import * as at from "../actions/types"
 
-const initState = { authenticated: false, }
+const initialState = { isAuthenticated: false }
 
-export default (state = initState, action) => {
-
+export default (state = initialState, action) => {
   console.log("outside switch")
   switch (action.type) {
-    // case actionTypes.TICK:
-    //   return Object.assign({}, state, {
-    //     lastUpdate: action.ts,
-    //     light: !!action.light,
-    //   })
-    case at.AUTH_REQUEST: 
-    case at.AUTH_FAILURE: 
+    case at.AUTH_REQUEST:
+    case at.AUTH_FAILURE:
       return state
-    case at.AUTH_SUCCESS: 
+    case at.AUTH_SUCCESS:
       return {
-        ...state, 
-        authenticated: true,
-        ...action.payload.userData
+        ...state,
+        isAuthenticated: true,
+        ...action.payload.userData,
       }
     default:
       return state
   }
-
 }
+

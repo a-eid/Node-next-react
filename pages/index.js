@@ -1,108 +1,43 @@
-import "isomorphic-fetch"
-import React, { Component, Fragment } from "react"
+import React, { Component } from "react"
 import { connect } from "react-redux"
-import Layout from "../components/Layout"
-import config from "../config.json"
+import Home from "../components/Home"
+import Loading from "../components/Loading"
+import { authSuccess } from "../redux/actions/actions"
 
-import { authFailure, authRequest, authSuccess } from "../redux/actions/actions"
 
-// social auth
-import FacebookLogin from "react-facebook-login"
-import { GoogleLogin } from "react-google-login"
+// probably make sense to 
+// refactor this into the layout component.
 
-class Home extends Component {
-  static getInitialProps({ reduxStore, req }) {
-    const isServer = !!req
-    return { isServer }
+class HomePage extends Component {
+  state = {
+    loading: true,
   }
 
-  componentDidMount() {}
-
-  facebookResponse = (e) => {
-    const tokenBlob = new Blob(
-      [JSON.stringify({ access_token: e.accessToken }, null, 2)],
-      { type: "application/json" },
-    )
-    const options = {
-      method: "POST",
-      body: tokenBlob,
-      mode: "cors",
-      cache: "default",
-    }
-
-    fetch("http://localhost:3000/api/auth/facebook", options).then((r) => {
-      const token = r.headers.get("x-auth-token")
-      r.json().then((user) => {
-        console.log("token", token, "user", user)
-        // local storage
-        // redux store...
-      })
+  componentDidMount() {
+    const auth = JSON.parse(localStorage.getItem("AUTH"))
+    const { token } = auth
+    const body = new Blob([JSON.stringify({ access_token: token }, null, 2)], {
+      type: "application/json",
     })
-  }
 
-  googleResponse = (e) => {
-    const tokenBlob = new Blob(
-      [JSON.stringify({ access_token: e.accessToken }, null, 2)],
-      { type: "application/json" },
-    )
-    const options = {
+    fetch("/api/auth/validateToken", {
       method: "POST",
-      body: tokenBlob,
-      mode: "cors",
-      cache: "default",
-    }
-    fetch("http://localhost:3000/api/auth/google", options).then((r) => {
-      const token = r.headers.get("x-auth-token")
-      r.json().then((user) => {
-        console.log("token", token, "user", user)
-        // local storage
-        // redux store...
-      })
+      body,
     })
-  }
-
-  onFailure = (error) => {
-    alert("something went wrong", error)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.valid) {
+          this.props.dispatch(authSuccess(auth))
+        }
+        this.setState({
+          loading: false,
+        })
+      })
   }
 
   render() {
-    return (
-      <Fragment>
-        <Layout title="Home">
-          <div>home page</div>
-
-          <div className="social-login">
-            <FacebookLogin
-              appId={config.FACEBOOK_APP_ID}
-              autoLoad={false}
-              fields="name,email,picture"
-              callback={this.facebookResponse}
-              style={{}}
-              cssClass=""
-              textButton="facebook login"
-            >
-              <span>facebook login</span>
-            </FacebookLogin>
-
-            <GoogleLogin
-              clientId={config.GOOGLE_CLIENT_ID}
-              onSuccess={this.googleResponse}
-              onFailure={this.googleResponse}
-              style={{}}
-            >
-              <span>google login</span>
-            </GoogleLogin>
-          </div>
-        </Layout>
-        <style jsx>{``}</style>
-      </Fragment>
-    )
+    return this.state.loading ? <Loading /> : <Home />
   }
 }
 
-const mapStateToProps = (state) => {
-  console.log(state)
-  return state
-}
-
-export default connect(mapStateToProps)(Home)
+export default connect()(HomePage)

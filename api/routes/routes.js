@@ -1,7 +1,12 @@
 const express = require("express")
 const router = express.Router()
-const { generateToken, sendToken } = require("../../utils/token.utils")
+const {
+  generateToken,
+  sendToken,
+  verifyToken,
+} = require("../../utils/token.utils")
 const passport = require("passport")
+
 const config = require("../../config")
 const request = require("request")
 
@@ -38,5 +43,11 @@ router.route("/auth/google").post(
   generateToken,
   sendToken,
 )
+
+router.post("/auth/validateToken", (req, res) => {
+  const { access_token } = req.body
+  const valid = verifyToken(access_token)
+  res.json({ valid })
+})
 
 module.exports = router
