@@ -1,9 +1,6 @@
 import * as at from "../actions/types"
 
-const initState = {
-  authenticated: false,
-  provider: null, 
-}
+const initState = { authenticated: false, }
 
 export default (state = initState, action) => {
 
@@ -18,15 +15,12 @@ export default (state = initState, action) => {
     case at.AUTH_FAILURE: 
       return state
     case at.AUTH_SUCCESS: 
-      console.log("AUTH_SUCCESS...here")
       return {
         ...state, 
         authenticated: true,
-        provider: "",
         ...action.payload.userData
       }
     default:
-      console.log("default")
       return state
   }
 

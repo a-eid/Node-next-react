@@ -1,3 +1,4 @@
+import "isomorphic-fetch"
 import React, { Component, Fragment } from "react"
 import { connect } from "react-redux"
 import Layout from "../components/Layout"
@@ -12,22 +13,52 @@ import { GoogleLogin } from "react-google-login"
 class Home extends Component {
   static getInitialProps({ reduxStore, req }) {
     const isServer = !!req
-    return {}
+    return { isServer }
   }
 
-  componentDidMount() {
-  }
-
+  componentDidMount() {}
 
   facebookResponse = (e) => {
-    console.log("fb, here")
-    const { dispatch } = this.props
-    dispatch(authSuccess(e))
+    const tokenBlob = new Blob(
+      [JSON.stringify({ access_token: e.accessToken }, null, 2)],
+      { type: "application/json" },
+    )
+    const options = {
+      method: "POST",
+      body: tokenBlob,
+      mode: "cors",
+      cache: "default",
+    }
+
+    fetch("http://localhost:3000/api/auth/facebook", options).then((r) => {
+      const token = r.headers.get("x-auth-token")
+      r.json().then((user) => {
+        console.log("token", token, "user", user)
+        // local storage
+        // redux store...
+      })
+    })
   }
+
   googleResponse = (e) => {
-    console.log("google, here")
-    const { dispatch } = this.props
-    dispatch(authSuccess(e))
+    const tokenBlob = new Blob(
+      [JSON.stringify({ access_token: e.accessToken }, null, 2)],
+      { type: "application/json" },
+    )
+    const options = {
+      method: "POST",
+      body: tokenBlob,
+      mode: "cors",
+      cache: "default",
+    }
+    fetch("http://localhost:3000/api/auth/google", options).then((r) => {
+      const token = r.headers.get("x-auth-token")
+      r.json().then((user) => {
+        console.log("token", token, "user", user)
+        // local storage
+        // redux store...
+      })
+    })
   }
 
   onFailure = (error) => {
