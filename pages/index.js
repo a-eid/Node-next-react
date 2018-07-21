@@ -4,6 +4,7 @@ import { connect } from "react-redux"
 import Layout from "../components/Layout"
 import SocialLogin from "../components/SocialLogin"
 import UserState from "../components/UserState"
+import NProgress from "nprogress"
 
 import { authFailure, authRequest, authSuccess } from "../redux/actions/actions"
 
@@ -40,6 +41,7 @@ class Home extends Component {
         }
         localStorage.setItem("AUTH", JSON.stringify(AUTH))
         this.props.dispatch(authSuccess(AUTH))
+        NProgress.done()
       })
     })
   }
@@ -68,8 +70,13 @@ class Home extends Component {
         }
         localStorage.setItem("AUTH", JSON.stringify(AUTH))
         this.props.dispatch(authSuccess(AUTH))
+        NProgress.done()
       })
     })
+  }
+
+  startLoader = () => {
+    NProgress.start()
   }
 
   onFailure = (error) => {
@@ -87,6 +94,7 @@ class Home extends Component {
               facebookResponse={this.facebookResponse}
               googleResponse={this.googleResponse}
               onFailure={this.onFailure}
+              onClick={this.startLoader}
             />
           ) : (
             <UserState />

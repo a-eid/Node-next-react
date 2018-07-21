@@ -14,6 +14,8 @@ export default (state = initialState, action) => {
         isAuthenticated: true,
         ...action.payload.userData,
       }
+    case at.AUTH_CLEAR:
+      return initialState
     default:
       return state
   }

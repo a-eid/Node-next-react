@@ -5,7 +5,6 @@ import { string } from "prop-types"
 import Router from "next/router"
 import NProgress from "nprogress"
 
-import Loading from "./Loading"
 import Nav from "./nav"
 import { authSuccess } from "../redux/actions/actions"
 
@@ -18,15 +17,31 @@ class Layout extends Component {
     loading: true,
   }
 
-  componentDidMount() {
-    const { isAuthenticated } = this.props
-    if (isAuthenticated)
-      return this.setState({
+  done = () => {
+    this.setState(
+      {
         loading: false,
-      })
+      },
+      () => {
+        NProgress.done()
+      },
+    )
+  }
 
-    const auth = JSON.parse(localStorage.getItem("AUTH"))
+  componentDidMount() {
+    NProgress.start()
+    const { isAuthenticated } = this.props
+    if (isAuthenticated) { 
+      this.done()
+    }
+
+    const auth = JSON.parse(localStorage.getItem("AUTH")) || {}
     const { token } = auth
+    if (!token) { 
+      this.done()
+      return 
+     }
+
     const body = new Blob([JSON.stringify({ access_token: token }, null, 2)], {
       type: "application/json",
     })
@@ -37,14 +52,14 @@ class Layout extends Component {
     })
       .then((res) => res.json())
       .then((res) => {
+        console.log("here")
         if (res.valid) {
           this.props.dispatch(authSuccess(auth))
+          console.log("valid")
+        }else {
+          console.log("not valid")
         }
-        setTimeout(() => {
-          this.setState({
-            loading: false,
-          })
-        }, 2000)
+        this.done()
       })
   }
 
@@ -84,9 +99,7 @@ class Layout extends Component {
           <meta property="og:image:height" content="630" />
           <link rel="stylesheet" href="/static/styles/main.css" />
         </Head>
-        {loading ? (
-          <Loading />
-        ) : (
+        {!loading && (
           <Fragment>
             <Nav isAuthenticated={isAuthenticated} />
             <div className="wrapper">{children}</div>
@@ -97,7 +110,6 @@ class Layout extends Component {
             max-width: 1200px;
             margin: auto;
             padding: 0 15px;
-            margin-top: 20px;
           }
         `}</style>
       </Fragment>

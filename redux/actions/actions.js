@@ -16,6 +16,10 @@ export const authRequest = () => ({
   type: at.AUTH_REQUEST
 })
 
+export const authClear = () => ({
+  type: at.AUTH_CLEAR
+})
+
 export const authFailure = (error) => ({
   type: at.AUTH_FAILURE,
   payload: { error }
