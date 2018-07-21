@@ -18,6 +18,7 @@ const SocialLogin = ({facebookResponse,googleResponse, onFailure, onClick }) => 
       cssClass=""
       textButton="facebook login"
       onClick={onClick}
+      onFailure={onFailure}
     >
       <span>facebook login</span>
     </FacebookLogin>

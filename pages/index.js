@@ -81,6 +81,7 @@ class Home extends Component {
 
   onFailure = (error) => {
     alert("something went wrong", error)
+    NProgress.done()
   }
 
   render() {

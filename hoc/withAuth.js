@@ -5,6 +5,7 @@ import NProgress from "nprogress"
 
 const withAuth = (Cmp) =>
   class HOC extends Component {
+    
     state = {
       loaded: false,
     }
@@ -13,6 +14,7 @@ const withAuth = (Cmp) =>
       NProgress.start()
       if (!this.props.isAuthenticated) Router.push("/")
       else this.setState({ loaded: true })
+      NProgress.done()
     }
 
     render() {
