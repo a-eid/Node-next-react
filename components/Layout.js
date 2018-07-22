@@ -13,55 +13,6 @@ Router.onRouteChangeComplete = () => NProgress.done()
 Router.onRouteChangeError = () => NProgress.done()
 
 class Layout extends Component {
-  state = {
-    loading: true,
-  }
-
-  done = () => {
-    this.setState(
-      {
-        loading: false,
-      },
-      () => {
-        NProgress.done()
-      },
-    )
-  }
-
-  componentDidMount() {
-    NProgress.start()
-    const { isAuthenticated } = this.props
-    if (isAuthenticated) { 
-      this.done()
-    }
-
-    const auth = JSON.parse(localStorage.getItem("AUTH")) || {}
-    const { token } = auth
-    if (!token) { 
-      this.done()
-      return 
-     }
-
-    const body = new Blob([JSON.stringify({ access_token: token }, null, 2)], {
-      type: "application/json",
-    })
-
-    fetch("/api/auth/validateToken", {
-      method: "POST",
-      body,
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("here")
-        if (res.valid) {
-          this.props.dispatch(authSuccess(auth))
-          console.log("valid")
-        }else {
-          console.log("not valid")
-        }
-        this.done()
-      })
-  }
 
   render() {
     const {
@@ -72,7 +23,6 @@ class Layout extends Component {
       children,
       isAuthenticated,
     } = this.props
-    const { loading } = this.state
     return (
       <Fragment>
         <Head>
@@ -99,12 +49,8 @@ class Layout extends Component {
           <meta property="og:image:height" content="630" />
           <link rel="stylesheet" href="/static/styles/main.css" />
         </Head>
-        {!loading && (
-          <Fragment>
-            <Nav isAuthenticated={isAuthenticated} />
-            <div className="wrapper">{children}</div>
-          </Fragment>
-        )}
+        <Nav isAuthenticated={isAuthenticated} />
+        <div className="wrapper">{children}</div>
         <style jsx>{`
           .wrapper {
             max-width: 1200px;

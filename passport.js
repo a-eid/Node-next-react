@@ -1,4 +1,4 @@
-require("./mongoose")()
+require("./db/mongoose")()
 const passport = require("passport")
 const User = require("mongoose").model("User")
 const FacebookTokenStrategy = require("passport-facebook-token")

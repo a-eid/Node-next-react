@@ -12,12 +12,16 @@ const withAuth = (Cmp) =>
 
     componentDidMount() {
       NProgress.start()
-      console.log(this.props)
       if (!this.props.isAuthenticated)
         Router.push("/")
       else
         this.setState({ loaded: true })
       NProgress.done()
+    }
+
+    componentWillReceiveProps(nextProps){
+      if(!nextprops.isAuthenticated)
+        Router.push("/")
     }
 
     render() {
